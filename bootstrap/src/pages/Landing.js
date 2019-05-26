@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Flex, Text, Button } from 'rebass'
+import { Flex, Text, Box, Image, Button } from 'rebass'
 import { get } from 'axios'
+import BG from 'images/bg.png'
+import Insert from 'images/insert.png'
+import ID from 'images/id.png'
 import Web3 from 'web3'
 
 window.web3 = new Web3(window.web3.currentProvider)
@@ -53,7 +56,8 @@ export default class Test extends React.Component {
         data: { result },
       } = await get(baseUrl + time)
       // setUser(result)
-      if (result.address !== this.state.user.address) {
+      console.warn('Result', result)
+      if (result.address && result.address !== this.state.user.address) {
         const op = x => (x.length < 64 ? op('0' + x) : x)
         const raw = await window.web3.eth.call({
           to: COMPANY_ADDR,
@@ -63,39 +67,78 @@ export default class Test extends React.Component {
           ['bool', 'string', 'uint256'],
           raw,
         )
-        console.warn(userDetail[1].split(','))
-        this.setState({
-          user: {
-            address: result.address,
-            sig: result.sig,
-            time: time,
-            detail: userDetail,
-            whiteListed: true,
+        const [imgSrc, name, surname] = userDetail[1].split(',')
+        this.setState(
+          {
+            user: {
+              address: result.address,
+              sig: result.sig,
+              time: time,
+              imgSrc,
+              name,
+              surname,
+              userDetail,
+              whiteListed: true,
+            },
           },
-        })
+          () => this.claimCheckIn(),
+        )
       }
       await sleep(1000)
     }
   }
+
   render() {
+    console.warn('XXX', this.state.user)
     return (
-      <Flex flexDirection="column" alignItems="center">
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        style={{
+          backgroundImage: `url('${BG}')`,
+          minHeight: '100vh',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'contain',
+        }}
+        pt="200px"
+      >
         {!this.state.user.whiteListed && (
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            style={{ height: '100vh' }}
-          >
-            <Text fontWeight={600} fontSize={24}>
-              Please insert student card
-            </Text>
-          </Flex>
+          <Box style={{ position: 'relative' }}>
+            <Image width="800px" src={Insert} />
+          </Box>
         )}
+
         {this.state.user.whiteListed && (
-          <Flex flexDirection="column" my={4} alignItems="center">
-            {this.state.user.address}
-            <Button onClick={this.claimCheckIn.bind(this)}>Claim</Button>
-          </Flex>
+          <Box style={{ position: 'relative' }}>
+            <Image width="800px" src={ID} />
+            <Text
+              fontSize="36px"
+              style={{ position: 'absolute', top: 112, left: 300 }}
+            >
+              {this.state.user.name} {this.state.user.surname}
+            </Text>
+            <Text
+              color="#ababab"
+              fontSize="36px"
+              style={{ position: 'absolute', top: 200, left: 300 }}
+            >
+              {new Date().getHours()}:{new Date().getMinutes()}
+            </Text>
+            <Image
+              width="128px"
+              height="128px"
+              style={{
+                position: 'absolute',
+                top: 110,
+                left: 40,
+                borderRadius: '10px',
+              }}
+              src={this.state.user.imgSrc}
+            />
+            {/* {this.state.user.address}
+            <Button onClick={this.claimCheckIn.bind(this)}>Claim</Button> */}
+          </Box>
         )}
       </Flex>
     )

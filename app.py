@@ -70,5 +70,5 @@ keycard-sign-pinless {hash_time.hex()}
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8888, threaded=False, debug=True)
+    app.run(host="0.0.0.0", port=7777, threaded=False, debug=True)
 

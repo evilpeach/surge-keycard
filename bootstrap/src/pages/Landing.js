@@ -8,8 +8,9 @@ import Web3 from 'web3'
 
 window.web3 = new Web3(window.web3.currentProvider)
 
-const baseUrl = 'http://localhost:8888/getCardInfo?timestamp='
-const COMPANY_ADDR = '0x6D09631c692c56ABF90277E0C5AE2b155c4542e5'
+const baseUrl = 'http://localhost:7777/getCardInfo?timestamp='
+// const COMPANY_ADDR = '0x6D09631c692c56ABF90277E0C5AE2b155c4542e5'
+const COMPANY_ADDR = '0x68D726910d7A0c0CE17d2bFf74A2d18F8dac49D9'
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
